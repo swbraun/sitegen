@@ -1,26 +1,26 @@
 import os
 import shutil
 
-def recurse_static(src, dst):
-    dirlist = os.listdir(src)
-    for content in dirlist:
-        src_path = os.path.join(src, content)
-        if os.path.isfile(src_path):
-            shutil.copy(src_path, dst)
-        else:
-            dst_path = os.path.join(dst, content)
-            os.mkdir(dst_path)
-            recurse_static(src_path, dst_path)
+from copystatic import copy_files_recursive
+from gencontent import generate_pages_recursive
 
-def copy_static(src, dst):
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
-    os.mkdir(dst)
-    recurse_static(src, dst)
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+dir_path_content = "./content"
+template_path = "./template.html"
+
 
 def main():
-    copy_static("./static", "./public")
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
+
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
+
+    print("Generating content...")
+    generate_pages_recursive(dir_path_content, template_path, dir_path_public)
+
 
 main()
-
-
